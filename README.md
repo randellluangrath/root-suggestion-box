@@ -1,5 +1,7 @@
 # root-suggestion-box
 
+https://github.com/user-attachments/assets/84c55bb4-044f-4a47-9ae5-fd071abdcebe
+
 This is a full-stack application built with Next.js for the client-side and Node.js with Express for the server-side. The project is organized into two main directories: client for the frontend and server for the backend.
 
 ### 1. Install Root Dependencies
