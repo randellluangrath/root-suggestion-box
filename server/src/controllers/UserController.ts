@@ -28,10 +28,8 @@ export class UserController {
   @HttpCode(200)
   async signIn(@Body() body: { id: number }) {
     try {
-      // Call the signIn method of the AuthenticationService with the provided user ID
       return this.authenticationService.signIn(body.id);
     } catch (error: any) {
-      // Throw an InternalServerError if the sign-in operation fails
       throw new InternalServerError(
         `Failed to sign in user with ID ${body.id}: ${error.message}`
       );
