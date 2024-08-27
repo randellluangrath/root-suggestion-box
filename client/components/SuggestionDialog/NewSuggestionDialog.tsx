@@ -6,6 +6,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { addSuggestion } from "@/services/ClientService";
 
 interface NewSuggestionDialogProps {
   isOpen: boolean;
@@ -33,28 +34,16 @@ const NewSuggestionDialog: React.FC<NewSuggestionDialogProps> = ({
     resolver: zodResolver(suggestionSchema),
   });
 
-  const { isSignedIn, user } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   const handleAddSuggestion = async (data: SuggestionFormData) => {
     try {
-      const response = await fetch("/api/suggestions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: data.title,
-          description: data.description,
-          userId: user?.id,
-        }),
-      });
-
-      if (response.ok) {
-        console.log("Suggestion created successfully");
-        onAddSuggestion();
-      } else {
-        console.error("Failed to create suggestion");
+      if (!user) {
+        throw new Error("User must be signed in to add a comment");
       }
+
+      await addSuggestion(data.title, data.description, user.id);
+      onAddSuggestion();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -95,7 +84,7 @@ const NewSuggestionDialog: React.FC<NewSuggestionDialogProps> = ({
               {...register("title")}
               className="p-2 border border-gray-500 rounded-md bg-white"
               placeholder="Title"
-              disabled={!isSignedIn}
+              disabled={!isLoggedIn}
             />
             {errors.title && (
               <span className="text-red-500">{errors.title.message}</span>
@@ -107,13 +96,13 @@ const NewSuggestionDialog: React.FC<NewSuggestionDialogProps> = ({
               {...register("description")}
               className="p-2 border border-gray-500 rounded-md bg-white"
               placeholder="Description"
-              disabled={!isSignedIn}
+              disabled={!isLoggedIn}
             />
             {errors.description && (
               <span className="text-red-500">{errors.description.message}</span>
             )}
 
-            <Button type="submit" disabled={!isSignedIn}>
+            <Button type="submit" disabled={!isLoggedIn}>
               Create
             </Button>
           </form>

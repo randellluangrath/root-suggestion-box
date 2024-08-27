@@ -4,37 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { signIn } from "@/services/ClientService";
 
-const handleSignIn = async (signIn: (token: string) => void) => {
-  const response = await fetch("/api/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: 1 }), // hard-coding a user id
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to sign in");
-  }
-
-  const data = await response.json();
-  const { token } = data;
-
-  signIn(token);
+const handleLogIn = async (logIn: (token: string) => void) => {
+  const token = await signIn(1); // hard-coding user here
+  logIn(token);
 };
 
-const handleSignOut = async (signOut: () => void) => {
-  signOut();
+const handleLogOut = async (logOut: () => void) => {
+  logOut();
 };
 
 const Header: React.FC = () => {
-  const { isSignedIn, user, signIn, signOut } = useAuth();
+  const { isLoggedIn, user, logIn, logOut } = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(false);
-  }, [isSignedIn]);
+  }, [isLoggedIn]);
 
   if (loading) {
     return null;
@@ -55,7 +42,7 @@ const Header: React.FC = () => {
         </Link>
 
         <div className="lg:flex lg:flex-1 lg:justify-end">
-          {isSignedIn ? (
+          {isLoggedIn ? (
             <div className="flex items-center gap-4">
               {user && (
                 <span className="text-sm font-semibold leading-6 text-white hover:text-gray-300 cursor-pointer">
@@ -66,7 +53,7 @@ const Header: React.FC = () => {
               <a
                 href="#"
                 className="text-sm font-semibold leading-6 text-white hover:text-gray-300 cursor-pointer"
-                onClick={() => handleSignOut(signOut)}
+                onClick={() => handleLogOut(logOut)}
               >
                 Sign Out <span aria-hidden="true">&rarr;</span>
               </a>
@@ -75,7 +62,7 @@ const Header: React.FC = () => {
             <a
               href="#"
               className="text-sm font-semibold leading-6 text-white hover:text-gray-300 cursor-pointer"
-              onClick={() => handleSignIn(signIn)}
+              onClick={() => handleLogIn(logIn)}
             >
               Sign In <span aria-hidden="true">&rarr;</span>
             </a>

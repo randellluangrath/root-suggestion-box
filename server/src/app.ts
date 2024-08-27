@@ -45,7 +45,7 @@ server.listen(PORT, async () => {
   await seederService.seedSuggestions(5);
 
   // Start simulating activity
-  seederService.startSimulation(5000); // Add a suggestion every 10 seconds
+  seederService.startSimulation(15000); // Add a suggestion every 15 seconds
 });
 
 /**

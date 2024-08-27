@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import Suggestion from "@/types/Suggestion";
 import { useAuth } from "@/contexts/AuthContext";
+import { addComment } from "@/services/ClientService";
 
 interface ViewSuggestionDialogProps {
   isOpen: boolean;
@@ -31,31 +32,17 @@ const ViewSuggestionDialog: React.FC<ViewSuggestionDialogProps> = ({
     resolver: zodResolver(commentSchema),
   });
 
-  const { isSignedIn, user } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   const handleAddComment = async (data: CommentFormData) => {
+    if (!user) {
+      throw new Error("User must be signed in to add a comment");
+    }
+
     if (suggestion && data.newComment) {
       try {
-        const response = await fetch(
-          `/api/suggestions/${suggestion.id}/comments`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              suggestionId: suggestion.id,
-              comment: data.newComment,
-              userId: user?.id,
-            }),
-          }
-        );
-
-        if (response.ok) {
-          onAddComment();
-        } else {
-          console.error("Failed to add comment");
-        }
+        await addComment(suggestion.id, data.newComment, user.id);
+        onAddComment();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -119,9 +106,9 @@ const ViewSuggestionDialog: React.FC<ViewSuggestionDialogProps> = ({
               {...register("newComment")}
               className="flex-grow p-2 border border-gray-500 rounded-md bg-white"
               placeholder="Add a comment..."
-              disabled={!isSignedIn}
+              disabled={!isLoggedIn}
             />
-            <Button type="submit" disabled={!isSignedIn}>
+            <Button type="submit" disabled={!isLoggedIn}>
               Send
             </Button>
           </form>

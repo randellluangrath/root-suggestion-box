@@ -17,7 +17,7 @@ interface SuggestionBoxesProps {
 const SuggestionBoxes: React.FC<SuggestionBoxesProps> = ({
   initialSuggestions,
 }) => {
-  const { isSignedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [suggestions, setSuggestions] =
     useState<Suggestion[]>(initialSuggestions);
   const [isViewSuggestionsDialogOpen, setIsViewSuggestionsDialogOpen] =
@@ -104,7 +104,7 @@ const SuggestionBoxes: React.FC<SuggestionBoxesProps> = ({
       </section>
 
       <section className="mx-auto max-w-7xl mt-2 p-6 bg-gray-100 rounded-t-lg md:rounded-t-lg md:rounded-b-none lg:rounded-lg relative gap-4">
-        {isSignedIn && (
+        {isLoggedIn && (
           <div className="flex justify-end p-4">
             <Button
               className="text-white px-4 py-2 rounded"

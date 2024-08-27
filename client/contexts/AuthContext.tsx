@@ -11,10 +11,10 @@ import { jwtDecode } from "jwt-decode";
 import User from "@/types/User";
 
 interface AuthContextType {
-  isSignedIn: boolean;
+  isLoggedIn: boolean;
   user: User | null;
-  signIn: (token: string) => void;
-  signOut: () => void;
+  logIn: (token: string) => void;
+  logOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         try {
           const decoded = jwtDecode<{ user: User }>(token);
           setUser(decoded.user);
-          setIsSignedIn(true);
+          setIsLoggedIn(true);
         } catch (error) {
           console.error("Failed to decode JWT:", error);
           localStorage.removeItem("jwtToken");
@@ -41,33 +41,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const signIn = (token: string) => {
+  const logIn = (token: string) => {
     localStorage.setItem("jwtToken", token);
     try {
       const decoded = jwtDecode<{ user: User }>(token);
       setUser(decoded.user);
-      setIsSignedIn(true);
+      setIsLoggedIn(true);
     } catch (error) {
-      console.error("Failed to decode JWT during sign-in:", error);
+      console.error("Failed to decode JWT during log-in:", error);
     }
   };
 
-  const signOut = () => {
+  const logOut = () => {
     localStorage.removeItem("jwtToken");
     setUser(null);
-    setIsSignedIn(false);
+    setIsLoggedIn(false);
 
-    console.log(isSignedIn);
+    console.log(isLoggedIn);
   };
 
   const value = useMemo(
     () => ({
-      isSignedIn,
+      isLoggedIn,
       user,
-      signIn,
-      signOut,
+      logIn,
+      logOut,
     }),
-    [isSignedIn, user]
+    [isLoggedIn, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -27,7 +27,7 @@ const SuggestionCard: React.FC<SuggestionCardProps> = ({
         </div>
         <p className="text-sm flex items-center text-gray-700">
           <MessageSquare className="h-5 w-5 mr-1 text-gray-500" />
-          {commentCount} suggestion{commentCount !== 1 ? "s" : ""}
+          {commentCount} comment{commentCount !== 1 ? "s" : ""}
         </p>
         <p className="text-sm flex items-center text-gray-700">
           <User className="h-5 w-5 mr-1 text-gray-500" />
