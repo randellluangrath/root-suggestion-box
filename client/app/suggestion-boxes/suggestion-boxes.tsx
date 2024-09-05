@@ -56,10 +56,17 @@ const SuggestionBoxes: React.FC<SuggestionBoxesProps> = ({
 
       // Listen for new suggestions from the server
       socket.on(EVENTS.SUGGESTION_CREATED, (newSuggestion: Suggestion) => {
-        setSuggestions((prevSuggestions) => [
-          ...prevSuggestions,
-          newSuggestion,
-        ]);
+        setSuggestions((prevSuggestions) => {
+          const isDuplicate = prevSuggestions.some(
+            (suggestion) => suggestion.id === newSuggestion.id
+          );
+
+          if (isDuplicate) {
+            return prevSuggestions;
+          }
+
+          return [...prevSuggestions, newSuggestion];
+        });
       });
 
       // Cleanup the WebSocket connection on unmount

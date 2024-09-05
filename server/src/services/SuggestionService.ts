@@ -3,6 +3,7 @@ import UserService from "./UserService";
 import Suggestion from "../types/Suggestion";
 import Comment from "../types/Comment";
 import { SocketService } from "./SocketService";
+import { EVENTS } from "../types/Events";
 
 @injectable()
 export default class SuggestionService {
@@ -50,7 +51,7 @@ export default class SuggestionService {
     this.suggestions.push(newSuggestion);
 
     // Emit event to notify clients
-    this.socketService.emit("newSuggestion", newSuggestion);
+    this.socketService.emit(EVENTS.SUGGESTION_CREATED, newSuggestion);
 
     return newSuggestion;
   }
